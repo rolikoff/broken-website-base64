@@ -46,7 +46,7 @@
             <h2>Enter Expression</h2>
             <input type="text" id="expr" placeholder="e.g. (12 + 8) * 3 / 2" value="(12 + 8) * 3 / 2">
             <div class="b64">Encoded: <span id="b64preview"></span></div>
-            <button class="btn btn-primary" onclick="evaluate()">Evaluate</button>
+            <button class="btn btn-primary" onclick="calcExpr()">Evaluate</button>
             <button class="btn btn-secondary" onclick="setExpr('sqrt(144) + pow(2, 10)')">sqrt + pow</button>
             <button class="btn btn-secondary" onclick="setExpr('round(M_PI, 4)')">pi</button>
             <button class="btn btn-secondary" onclick="setExpr('max(10, 20, 30) - min(1, 2, 3)')">max/min</button>
@@ -69,7 +69,7 @@
             document.getElementById('b64preview').textContent = btoa(expr);
         }
 
-        async function evaluate() {
+        async function calcExpr() {
             const expr = document.getElementById('expr').value;
             const encoded = btoa(expr);
             updatePreview();
