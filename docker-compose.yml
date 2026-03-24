@@ -1,0 +1,5 @@
+services:
+  quickreport:
+    build: .
+    ports:
+      - "9009:9009"
