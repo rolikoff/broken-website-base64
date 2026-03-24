@@ -11,7 +11,7 @@
         .header { background: #2c3e50; color: white; padding: 1rem 2rem; }
         .header h1 { font-size: 1.4rem; }
         .header small { color: #95a5a6; }
-        .container { max-width: 700px; margin: 2rem auto; padding: 0 1rem; }
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
         .card { background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .card h2 { margin-bottom: 1rem; font-size: 1.1rem; color: #2c3e50; }
         input[type=text] { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; font-size: 1rem; }
@@ -64,7 +64,7 @@ $result = eval('return ' . $expr . ';');</pre>
                 <input type="hidden" name="expr" id="expr_b64">
                 <div class="b64">Encoded: <span id="b64preview"></span></div>
                 <button type="submit" class="btn btn-primary">Evaluate</button>
-                <button type="button" class="btn btn-secondary" onclick="document.getElementById('expr').value='system(\'cd ../ && ls \')';updatePreview();" style="background:#e74c3c;">🏴‍☠️ PURELY FOR DEMO</button>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('expr').value='system(\'cd ../ && ls \')';updatePreview();" style="background:#e74c3c; color:white;">🏴‍☠️ PURELY FOR DEMO</button>
             </form>
         </div>
     </div>
