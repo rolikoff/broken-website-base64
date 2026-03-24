@@ -45,10 +45,7 @@ $department = $_POST['department'] ?? 'General';
 $company = 'Acme Corp';
 $year = date('Y');
 
-// --- VULNERABLE CODE ---
-// The template is treated as PHP code and evaluated.
-// This allows <?= expr ?> syntax in templates but also allows
-// arbitrary code execution if an attacker crafts a malicious payload.
+// --- NO GUARD — eval() on raw decoded input ---
 
 ob_start();
 
