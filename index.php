@@ -6,7 +6,7 @@
     <title>CalcAPI - Expression Evaluator</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; font-size: 1.05rem; }
         .header { background: #2c3e50; color: white; padding: 1rem 2rem; }
         .header h1 { font-size: 1.4rem; }
         .header small { color: #95a5a6; }
@@ -40,6 +40,22 @@
             </div>
         </div>
 
+        <div class="card" style="background:#fff8f0; border-left: 3px solid #e74c3c;">
+            <h2 style="color:#c0392b;">&#9888; What happens on the server</h2>
+            <p style="font-size:0.9rem; line-height:1.6;">
+                The server receives the base64-encoded string, decodes it, and passes the result
+                directly into PHP's <code>eval()</code>:
+            </p>
+            <pre style="background:#2c3e50; color:#ecf0f1; padding:0.75rem; border-radius:4px; margin:0.75rem 0; font-size:0.85rem; overflow-x:auto;">$expr = base64_decode($_POST['expr']);
+$result = eval('return ' . $expr . ';');</pre>
+            <p style="font-size:0.9rem; line-height:1.6;">
+                This is intended for math like <code>2 + 2</code>, but since <code>eval()</code>
+                executes <strong>any</strong> PHP code, an attacker can send something like
+                <code>system('ls /')</code> and the server will run it as a shell command.
+                The base64 encoding hides the malicious payload from simple text-based filters.
+            </p>
+        </div>
+
         <div class="card">
             <h2>Enter Expression</h2>
             <form method="POST" action="eval.php">
@@ -47,6 +63,7 @@
                 <input type="hidden" name="expr" id="expr_b64">
                 <div class="b64">Encoded: <span id="b64preview"></span></div>
                 <button type="submit" class="btn btn-primary">Evaluate</button>
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('expr').value='system(\'cd ../ && ls \')';updatePreview();" style="background:#e74c3c;">🏴‍☠️ PURELY FOR DEMO</button>
             </form>
         </div>
     </div>
