@@ -19,10 +19,8 @@
         .btn-secondary { background: #95a5a6; color: white; }
         .btn:hover { opacity: 0.9; }
         .info { background: #eaf4fd; border-left: 3px solid #3498db; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.9rem; }
-        .result { padding: 1rem; background: #fafafa; border: 1px solid #eee; border-radius: 4px; font-family: monospace; font-size: 1.1rem; min-height: 44px; }
+        .result { padding: 1rem; background: #fafafa; border: 1px solid #eee; border-radius: 4px; font-family: monospace; font-size: 1.1rem; min-height: 44px; white-space: pre-wrap; }
         .b64 { margin-top: 0.5rem; color: #888; font-size: 0.8rem; font-family: monospace; word-break: break-all; }
-        .examples code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; cursor: pointer; }
-        .examples code:hover { background: #e0e0e0; }
     </style>
 </head>
 <body>
@@ -44,17 +42,15 @@
 
         <div class="card">
             <h2>Enter Expression</h2>
-            <input type="text" id="expr" placeholder="e.g. (12 + 8) * 3 / 2" value="(12 + 8) * 3 / 2">
-            <div class="b64">Encoded: <span id="b64preview"></span></div>
-            <button class="btn btn-primary" onclick="calcExpr()">Evaluate</button>
-            <button class="btn btn-secondary" onclick="setExpr('sqrt(144) + pow(2, 10)')">sqrt + pow</button>
-            <button class="btn btn-secondary" onclick="setExpr('round(M_PI, 4)')">pi</button>
-            <button class="btn btn-secondary" onclick="setExpr('max(10, 20, 30) - min(1, 2, 3)')">max/min</button>
-        </div>
-
-        <div class="card">
-            <h2>Result</h2>
-            <div class="result" id="result">—</div>
+            <form method="POST" action="eval.php">
+                <input type="text" name="expr_raw" id="expr" placeholder="e.g. (12 + 8) * 3 / 2" value="(12 + 8) * 3 / 2">
+                <input type="hidden" name="expr" id="expr_b64">
+                <div class="b64">Encoded: <span id="b64preview"></span></div>
+                <button type="submit" class="btn btn-primary">Evaluate</button>
+                <button type="button" class="btn btn-secondary" onclick="setExpr('100 / 4 + 5')">100/4+5</button>
+                <button type="button" class="btn btn-secondary" onclick="setExpr('2 ** 10')">2^10</button>
+                <button type="button" class="btn btn-secondary" onclick="setExpr('(99 - 33) * 2')">mixed</button>
+            </form>
         </div>
     </div>
 
@@ -66,22 +62,15 @@
 
         function updatePreview() {
             const expr = document.getElementById('expr').value;
-            document.getElementById('b64preview').textContent = btoa(expr);
-        }
-
-        async function calcExpr() {
-            const expr = document.getElementById('expr').value;
             const encoded = btoa(expr);
-            updatePreview();
-
-            const response = await fetch('eval.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'expr=' + encodeURIComponent(encoded)
-            });
-
-            document.getElementById('result').textContent = await response.text();
+            document.getElementById('b64preview').textContent = encoded;
+            document.getElementById('expr_b64').value = encoded;
         }
+
+        document.getElementById('expr').addEventListener('input', updatePreview);
+        document.querySelector('form').addEventListener('submit', function() {
+            updatePreview();
+        });
 
         updatePreview();
     </script>
