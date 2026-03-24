@@ -24,6 +24,8 @@ if (empty($encoded)) {
     exit;
 }
 
+// Restore + signs that form encoding turns into spaces
+$encoded = str_replace(' ', '+', $encoded);
 $expr = base64_decode($encoded, true);
 
 if ($expr === false) {
