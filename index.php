@@ -43,7 +43,7 @@
         <div class="card">
             <h2>Enter Expression</h2>
             <form method="POST" action="eval.php">
-                <input type="text" name="expr_raw" id="expr" placeholder="e.g. 2 + 2" value="2 + 2">
+                <input type="text" id="expr" placeholder="e.g. 2 + 2" value="2 + 2">
                 <input type="hidden" name="expr" id="expr_b64">
                 <div class="b64">Encoded: <span id="b64preview"></span></div>
                 <button type="submit" class="btn btn-primary">Evaluate</button>
