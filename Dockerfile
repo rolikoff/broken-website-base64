@@ -1,7 +1,7 @@
 FROM php:8.3-cli
 
 WORKDIR /app
-COPY index.php render.php ./
+COPY index.php eval.php ./
 
 EXPOSE 9009
 

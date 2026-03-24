@@ -2,4 +2,4 @@ services:
   quickreport:
     build: .
     ports:
-      - "9009:9009"
+      - "127.0.0.1:9009:9009"
