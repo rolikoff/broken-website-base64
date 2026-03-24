@@ -6,7 +6,8 @@
     <title>CalcAPI - Expression Evaluator</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; font-size: 1.05rem; }
+        html { font-size: 140%; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; }
         .header { background: #2c3e50; color: white; padding: 1rem 2rem; }
         .header h1 { font-size: 1.4rem; }
         .header small { color: #95a5a6; }
